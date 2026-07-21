@@ -27,3 +27,76 @@ Order by author_id ASC;
 @Start
 select tweet_id from Tweets
 where Char_Length(content)>15;
+
+
+1378. Replace Employee ID With The Unique Identifier
+@Start
+select eu.unique_id, e.name
+from Employees e Left Join EmployeeUNI eu
+on e.id=eu.id;
+
+
+1068. Product Sales Analysis I
+@Start
+select Product.product_name, Sales.year, Sales.price
+from Product Inner join Sales
+on Product.product_id=Sales.product_id;
+
+
+1581. Customer Who Visited but Did Not Make Any Transactions
+@Start
+select v.customer_id, count(v.customer_id) as count_no_trans
+from Visits v Left Join Transactions t
+on v.visit_id=t.visit_id
+where t.transaction_id is Null
+group by v.customer_id;
+
+
+197. Rising Temperature
+@Start
+select w1.id from Weather w1 join Weather w2
+where Datediff(w1.recordDate, w2.recordDate)=1 AND w1.temperature > w2.temperature;
+
+
+1661. Average Time of Process per Machine
+@Start
+SELECT s.machine_id, ROUND(AVG(e.timestamp-s.timestamp),3) as processing_time 
+FROM Activity s
+JOIN Activity e ON e.machine_id=s.machine_id
+WHERE s.activity_type='start' AND e.activity_type='end'
+GROUP BY s.machine_id;
+
+
+577. Employee Bonus
+@Start
+select e.name, b.bonus
+from Employee e left join Bonus b
+on e.empId=b.empId
+where b.bonus<1000 or b.bonus is Null;
+
+
+1280. Students and Examinations
+@Start
+select s.student_id, s.student_name, sb.subject_name, Count(e.subject_name) as attended_exams
+from Students s cross join Subjects sb
+left join Examinations e
+on s.student_id=e.student_id and sb.subject_name=e.subject_name
+group by s.student_id, s.student_name, sb.subject_name
+order by s.student_id, sb.subject_name;
+
+
+570. Managers with at Least 5 Direct Reports
+@Start
+select e.name
+from Employee e Inner join Employee m
+on e.id=m.managerId
+group by m.managerId
+having count(m.managerId)>=5
+
+
+1934. Confirmation Rate
+@Start
+select s.user_id, round(ifnull(avg(action='confirmed'),0),2) as confirmation_rate
+from Signups s left join Confirmations c
+on s.user_id=c.user_id 
+group by user_id;
