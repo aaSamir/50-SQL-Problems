@@ -100,3 +100,79 @@ select s.user_id, round(ifnull(avg(action='confirmed'),0),2) as confirmation_rat
 from Signups s left join Confirmations c
 on s.user_id=c.user_id 
 group by user_id;
+
+
+620. Not Boring Movies
+@start
+select * from Cinema
+where id%2=1 and description !='boring'
+order by rating desc;
+
+
+1251. Average Selling Price
+@start
+select p.product_id, IFNULL(round(sum(p.price*u.units)/sum(u.units),2),0) as average_price
+from Prices p left join UnitsSold u
+on p.product_id=u.product_id and u.purchase_date between p.start_date and p.end_date
+group by p.product_id
+
+
+
+1075. Project Employees I
+@Start
+select p.project_id, round(sum(e.experience_years)/count(e.experience_years),2) as average_years
+from Project p left join Employee e
+on p.employee_id=e.employee_id
+group by p.project_id
+
+
+
+1633. Percentage of Users Attended a Contest
+@Start
+select contest_id, round(count(distinct user_id)*100/(select count(user_id) from Users), 2) as percentage
+from Register
+group by contest_id
+order by percentage desc, contest_id
+
+
+
+1211. Queries Quality and Percentage
+@start
+select query_name,
+round(avg(rating / position), 2) as quality,
+round(sum(case when rating<3 then 1 else 0 end)*100/count(*), 2) as poor_query_percentage
+from queries
+where query_name is not NULL
+group by query_name
+
+
+
+1193. Monthly Transactions I
+@Start
+select 
+date_format(trans_date, '%Y-%m') as month,
+country,
+Count(id) as trans_count,
+sum(case when state='approved' then 1 else 0 end) as approved_count,
+sum(amount) as trans_total_amount,
+sum(case when state='approved' then amount else 0 end) as approved_total_amount
+from Transactions
+group by month, country
+
+
+
+1174. Immediate Food Delivery II
+@start
+select
+round(avg(order_date=customer_pref_delivery_date)*100, 2) as immediate_percentage
+from Delivery
+where (customer_id, order_date) in (
+    select customer_id, min(order_date)
+    from Delivery
+    group by customer_id
+)
+
+
+
+550. Game Play Analysis IV
+@Start
