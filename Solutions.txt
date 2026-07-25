@@ -183,7 +183,15 @@ where (customer_id, order_date) in (
 
 550. Game Play Analysis IV
 @Start
-
+SELECT
+  ROUND(COUNT(DISTINCT player_id) / (SELECT COUNT(DISTINCT player_id) FROM Activity), 2) AS fraction
+FROM
+  Activity
+WHERE
+  (player_id, DATE_SUB(event_date, INTERVAL 1 DAY))
+  IN (
+    SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id
+  )
 
 
 
@@ -339,37 +347,85 @@ order by employee_id
 
 1789. Primary Department for Each Employee
 @start
+select employee_id, department_id
+from Employee
+where primary_flag = 'Y'
+UNION 
+select employee_id, department_id
+from Employee
+group by employee_id
+having count(employee_id)=1
 
 
 
 
 610. Triangle Judgement
 @start
+select *, if(x+y>z and y+z>x and z+x>y,'Yes','No') as triangle
+from Triangle
 
 
 
 
 180. Consecutive Numbers
 @start
+SELECT DISTINCT l1.num AS ConsecutiveNums
+FROM Logs l1, Logs l2, Logs l3
+WHERE l1.num = l2.num
+  AND l2.num = l3.num
+  AND l1.id = l2.id - 1
+  AND l2.id = l3.id - 1;
 
 
 
 
 1164. Product Price at a Given Date
 @start
+select product_id, 10 as price
+from Products
+group by product_id
+having min(change_date)>"2019-08-16"
+
+union
+
+select product_id, new_price
+from Products
+where (product_id, change_date) in (
+    select product_id, max(change_date) as recent_date
+    from Products
+    where change_date<="2019-08-16"
+    group by product_id
+)
 
 
 
 
 1204. Last Person to Fit in the Bus
 @start
+select person_name 
+from (
+    select person_name, sum(weight) over (order by turn) as total_weight
+    from queue
+    ) t
+where total_weight <=1000
+order by total_weight desc
+limit 1; 
 
 
 
 
 1907. Count Salary Categories
 @start
+SELECT "Low Salary" AS category, sum(income < 20000) AS accounts_count
+  FROM Accounts
+UNION
 
+SELECT "Average Salary" AS category, sum(income BETWEEN 20000 AND 50000) AS accounts_count
+  FROM Accounts
+UNION
+
+SELECT "High Salary" AS category, sum(income > 50000) AS accounts_count
+  FROM Accounts;
 
 
 
